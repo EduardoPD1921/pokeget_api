@@ -18,6 +18,7 @@ services:
         ports:
             - 8080:8080
         volumes:
-            - .:/src
+            - ./:/usr/src/app
+            - /usr/src/app/node_modules
         links:
             - mysql
