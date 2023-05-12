@@ -6,6 +6,16 @@ class User {
         const user = await prisma.user.create({ data });
         return user;
     }
+
+    static async getById(id: number) {
+        const user = await prisma.user.findUnique({
+            where: {
+                id
+            }
+        });
+
+        return user;
+    }
 }
 
 export = User;
