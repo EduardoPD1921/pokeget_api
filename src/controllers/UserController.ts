@@ -6,7 +6,7 @@ import User from '../models/User';
 
 import { createHash, compareHash } from '../services/hashService';
 import { validate } from '../services/validatorService';
-import { generateAccessToken } from '../services/jwtService';
+import { generateRefreshAndAccessToken } from '../services/jwtService';
 import { handleError } from '../services/errorService';
 
 import { userValidation } from '../utils/validationObjects';
@@ -31,13 +31,18 @@ class UserController {
     }
 
     static async authUser(req: Request, res: Response) {
-        const hashValidation = await compareHash(req.body.password, res.locals.user.password);
-        if (hashValidation) {
-            const token = generateAccessToken(res.locals.user.email);
-            return res.status(200).send(token);
-        }
+        try {
+            const hashValidation = await compareHash(req.body.password, res.locals.user.password);
+            if (hashValidation) {
+                const { token, refreshToken } = generateRefreshAndAccessToken(res.locals.user.email);
+                return res.status(200).send({ token, refreshToken });
+            }
 
-        res.status(400).send('Wrong credentials.');
+            res.status(400).send('Wrong credentials.');
+        } catch (e) {
+            const error = handleError(e);
+            res.status(500).send(error.message);
+        }
     }
 
     static async getUser(req: Request, res: Response) {
