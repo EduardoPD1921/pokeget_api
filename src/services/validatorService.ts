@@ -4,7 +4,7 @@ type ValidateObject = {
     unique?: boolean
 };
 
-export async function validate(expectedData: ValidateObject[], data: any, prismaModel: any) {
+export async function validate(expectedData: ValidateObject[], data: any, prismaModel?: any) {
     let errors: string[] = [];
 
     for (const { fieldName, required, unique } of expectedData) {
